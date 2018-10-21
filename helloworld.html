@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+ <head>
+   <meta charset="UTF-8">
+   <title>newworld</title>
+ </head>
+ <body>
+
+   <h1>Hello World</h1>
+
+   <!-- Add react app entry points -->
+   <div id="newworld_entry"></div>
+   <div id="newworld_entry2"></div>
+
+   <!-- =========================IMPORT============================= -->
+
+   <!-- development scripts -->
+   <script src="react_library/react_16.5.2/react.development.js"></script>
+   <script src="react_library/react_16.5.2/react-dom.development.js"></script>
+   <script src="react_library/react_table_6.8.6/react-table.js"></script>
+
+   <!-- production scripts -->
+   <!-- <script src="react_library/react_16.5.2/react.production.min.js"></script>
+   <script src="react_library/react_16.5.2/react-dom.production.min.js"></script>
+   <script src="react_library/react_table_6.8.6/react-table.min.js"></script> -->
+
+   <!-- other scripts and css -->
+   <link rel="stylesheet" href="react_library/react_table_6.8.6/react-table.css">
+   <script>var ReactTable = window.ReactTable.default</script>
+
+   <!-- react app -->
+   <script src="newworld.js"></script>
+
+   <!-- =========================IMPORT============================= -->
+
+   <!-- Babel JSX auto-convert command:
+   npx babel --watch src --out-dir . --presets react-app/prod  -->
+ </body>
+</html>
