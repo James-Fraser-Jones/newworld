@@ -1,5 +1,6 @@
 'use strict';
 
+//============================constants for testing=============================
 const bigdata =
 [{"purch":null,"vendor":42,"reserve":null,"sPrice":null,"preBid":null,"desc":"projectors fridge","lotNum":1},
 {"purch":null,"vendor":381,"reserve":40.09,"sPrice":136.55,"preBid":0.53,"desc":"one bobby","lotNum":2},
@@ -102,74 +103,106 @@ const bigdata =
 {"purch":180,"vendor":49,"reserve":null,"sPrice":177.93,"preBid":null,"desc":"ruled greene","lotNum":99},
 {"purch":697,"vendor":846,"reserve":49.78,"sPrice":125.4,"preBid":9.63,"desc":"eligible technological","lotNum":100}]
 
-const e = React.createElement;
+//===============================react components===============================
 
-class LikeButton extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { liked: false };
+class App extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      data: bigdata
+    };
+    this.renderEditable = this.renderEditable.bind(this);
   }
+  renderEditable(cellInfo) {
+    return (
+      <div
+        style={{height: 16}}
+        contentEditable
+        suppressContentEditableWarning
+        onBlur={e => {
+          const data = [...this.state.data];
 
+          if (data[cellInfo.index][cellInfo.column.id] !== e.target.innerHTML) {
+            console.log("Old value: " + data[cellInfo.index][cellInfo.column.id])
+            console.log("New value: " + e.target.innerHTML)
+          }
+          
+          data[cellInfo.index][cellInfo.column.id] = e.target.innerHTML;
+          this.setState({ data });
+        }}
+        dangerouslySetInnerHTML={{
+          __html: this.state.data[cellInfo.index][cellInfo.column.id]
+        }}
+      />
+    );
+  }
   render() {
-    if (this.state.liked) {
-      return 'You liked this.';
-    }
-
-    return e(
-      'button',
-      { onClick: () => this.setState({ liked: true }) },
-      'Like'
+    const { data } = this.state;
+    return (
+      <div>
+        <h1>New World</h1>
+        <ReactTable
+          data={data}
+          columns={[
+            {
+              Header: 'Lot Number',
+              accessor: 'lotNum',
+              //Cell: props => <span className='number'>{props.value}</span> // Custom cell components!
+              Cell: this.renderEditable
+            },
+            {
+              Header: 'Vendor',
+              accessor: 'vendor',
+              //Cell: props => <span className='number'>{props.value}</span> // Custom cell components!
+              Cell: this.renderEditable
+            },
+            {
+              Header: 'Item Description',
+              accessor: 'desc', // String-based value accessors!
+              Cell: this.renderEditable
+            },
+            {
+              Header: 'Reserve',
+              accessor: 'reserve',
+              //Cell: props => <span className='number'>{props.value}</span> // Custom cell components!
+              Cell: this.renderEditable
+            },
+            {
+              Header: 'Pre-sale Bids',
+              accessor: 'preBid',
+              //Cell: props => <span className='number'>{props.value}</span> // Custom cell components!
+              Cell: this.renderEditable
+            },
+            {
+              Header: 'Purchaser',
+              accessor: 'purch',
+              //Cell: props => <span className='number'>{props.value}</span> // Custom cell components!
+              Cell: this.renderEditable
+            },
+            {
+              Header: 'Sale Price',
+              accessor: 'sPrice',
+              //Cell: props => <span className='number'>{props.value}</span> // Custom cell components!
+              Cell: this.renderEditable
+            }
+          ]}
+          className="-striped -highlight"
+          showPagination={false}
+          defaultPageSize = {100}
+          filterable = {true}
+          style={{
+            height: "800px" // This will force the table body to overflow and scroll, since there is not enough room
+          }}
+        />
+      </div>
     );
   }
 }
 
-//this class utilizes react-table addon
-class App extends React.Component {
-  render() {
-    const data = bigdata
-    const columns = [
-      {
-        Header: 'Lot Number',
-        accessor: 'lotNum',
-        Cell: props => <span className='number'>{props.value}</span> // Custom cell components!
-      },
-      {
-        Header: 'Vendor',
-        accessor: 'vendor',
-        Cell: props => <span className='number'>{props.value}</span> // Custom cell components!
-      },
-      {
-        Header: 'Item Description',
-        accessor: 'desc' // String-based value accessors!
-      },
-      {
-        Header: 'Reserve',
-        accessor: 'reserve',
-        Cell: props => <span className='number'>{props.value}</span> // Custom cell components!
-      },
-      {
-        Header: 'Pre-sale Bids',
-        accessor: 'preBid',
-        Cell: props => <span className='number'>{props.value}</span> // Custom cell components!
-      },
-      {
-        Header: 'Purchaser',
-        accessor: 'purch',
-        Cell: props => <span className='number'>{props.value}</span> // Custom cell components!
-      },
-      {
-        Header: 'Sale Price',
-        accessor: 'sPrice',
-        Cell: props => <span className='number'>{props.value}</span> // Custom cell components!
-      }
-    ];
-
-    return <ReactTable data={data} columns={columns} />;
-  }
-}
+//===========single render call to render the app component=====================
 
 //render the above app in the react entry point in the html file
 var domContainer = document.querySelector('#newworld_entry');
-ReactDOM.render(e(LikeButton), domContainer);
-domContainer = document.querySelector('#newworld_entry2');
-ReactDOM.render(e(App), domContainer);
+ReactDOM.render(<App/>, domContainer);
+
+//=============================graveyard========================================
