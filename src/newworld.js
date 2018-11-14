@@ -103,6 +103,18 @@ const bigdata =
 {"purch":180,"vendor":49,"reserve":null,"sPrice":177.93,"preBid":null,"desc":"ruled greene","lotNum":99},
 {"purch":697,"vendor":846,"reserve":49.78,"sPrice":125.4,"preBid":9.63,"desc":"eligible technological","lotNum":100}]
 
+const dbJSON = {
+    "columns":[
+      {"name":"Age", "type":"Int", "nullable":false},
+      {"name":"IsHappy", "type":"Bool", "nullable":true},
+      {"name":"Message", "type":"String", "nullable":true}
+    ],
+    "data":[
+      [4, null, "hello"],
+      [16, true, null]
+    ]
+  }
+
 //===============================react components===============================
 
 class App extends React.Component {
@@ -126,7 +138,7 @@ class App extends React.Component {
             console.log("Old value: " + data[cellInfo.index][cellInfo.column.id])
             console.log("New value: " + e.target.innerHTML)
           }
-          
+
           data[cellInfo.index][cellInfo.column.id] = e.target.innerHTML;
           this.setState({ data });
         }}
@@ -199,10 +211,119 @@ class App extends React.Component {
   }
 }
 
+class App2 extends React.Component {
+  constructor(){
+    super();
+    this.state = {
+      data: dbJSON
+    };
+  }
+  render(){
+    return(
+      <div>
+        {JSON.stringify(this.state.data)}
+      </div>
+    );
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+// class App3 extends React.Component {
+//   constructor(){
+//     super();
+//   }
+//   render(){
+//     return(<Cell/>);
+//   }
+// }
+
+class Cell extends React.Component {
+  constructor(props){
+    super();
+    this.state = {
+      value: props.value,
+      confirmed: props.confirmed
+    };
+  }
+  render(){
+    let comp;
+    if (this.state.confirmed){
+      comp = (<div><b>{this.state.value}</b></div>);
+    }
+    else{
+      comp = (<div contentEditable suppressContentEditableWarning><i style={{color: "red"}}>{this.state.value}</i></div>);
+    }
+    return(comp);
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+const exampleObject = [{pk: 1, name:"James", age:23, grapes:true},
+                       {pk: 2, name:"Nathan", age:24, grapes:false},
+                       {pk: 4, name:"Edie", age:22, grapes:true}];
+
+function PureTable(props){
+  let headerNames = Object.keys(props.grid[0]);
+  let grid = props.grid.map(x => Object.values(x));
+
+  return(
+    <div className="divTable minimalistBlack">
+      <PureHead headerNames={headerNames}/>
+      <PureBody grid={grid}/>
+    </div>
+  );
+}
+
+function PureHead(props){
+  return(
+    <div className="divTableHeading">
+      <PureRow row={props.headerNames} isHeader={true}/>
+    </div>
+  );
+}
+
+function PureBody(props){
+  //make rows
+  let rows = [];
+  for (let i = 0; i < props.grid.length; i++){
+    rows.push(<PureRow key={i} row={props.grid[i]} isHeader={false}/>);
+  }
+
+  return(
+    <div className="divTableBody">{rows}</div>
+  );
+}
+
+function PureRow(props){
+  //make cells
+  let cells = [];
+  for (let i = 0; i < props.row.length; i++){
+    if (props.isHeader){
+      cells.push(<PureHeader key={i} headerName={props.row[i]}/>);
+    }
+    else{
+      cells.push(<PureCell key={i} cellValue={props.row[i]}/>);
+    }
+  }
+
+  return(<div className="divTableRow">{cells}</div>);
+}
+
+function PureHeader(props){
+  return(<div className="divTableHead">{props.headerName.toString()}</div>)
+}
+
+function PureCell(props){
+  return(<div className="divTableCell" contentEditable suppressContentEditableWarning>{props.cellValue.toString()}</div>)
+}
+
 //===========single render call to render the app component=====================
 
 //render the above app in the react entry point in the html file
 var domContainer = document.querySelector('#newworld_entry');
-ReactDOM.render(<App/>, domContainer);
+//ReactDOM.render(<TestButton/>, domContainer);
+ReactDOM.render(<PureTable grid={exampleObject}/>, domContainer);
 
 //=============================graveyard========================================
